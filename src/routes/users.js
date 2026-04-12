@@ -1,4 +1,5 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const logger = require("../middleware/log");
 const userRouter = express.Router();
@@ -7,6 +8,19 @@ const filteredFields = "firstName lastName age gender email skills about";
 // fetch all the users.
 userRouter.get("/users", logger, async (req, res) => {
   try {
+    const { token } = req.cookies;
+  // Validate the token that is not empty
+  if (!token) {
+    return res.status(401).send("Please login or Signup first");
+  }
+
+  const decodedObj = await jwt.verify(token, "DevTinder@1");
+  const { _id } = decodedObj;
+
+  const user = await User.findById(_id);
+  if (!user) {
+    throw new Error("User not found");
+  }
     const resposne = await User.find({ isDelete: false }).select(
       filteredFields,
     );
