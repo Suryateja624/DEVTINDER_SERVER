@@ -1,9 +1,15 @@
 const express = require("express");
+
 const connectToDatabase = require("./src/config/database");
-const User = require("./src/models/user");
-const connectionRequest = require("./src/models/connectionRequest");
-const logger = require("./src/middleware/log");
+const authRouter = require("./src/routes/auth");
+const userRouter = require("./src/routes/users");
 const app = express();
+
+app.use(express.json());
+
+app.use("/", authRouter);
+app.use("/", userRouter);
+
 
 connectToDatabase()
   .then(async () => {
@@ -15,39 +21,3 @@ connectToDatabase()
   .catch(() => {
     console.log("database connection failed");
   });
-
-app.get("/", logger, (req, res) => {
-  res.send("This is GETs.");
-});
-
-app.get("/test", logger, (req, res) => {
-  res.send("This is the test");
-});
-
-app.post("/test", logger, (req, res) => {
-  res.send("This is the Post API");
-});
-
-app.put("/test", logger, (req, res) => {
-  res.send("this is put API");
-});
-
-app.delete("/test", logger, (req, res) => {
-  res.send("this is delete API");
-});
-
-app.get("/message", logger, (req, res) => {
-  res.send("this is get message");
-});
-
-app.post("/message", logger, (req, res) => {
-  res.send("this is post message");
-});
-
-app.put("/message", logger, (req, res) => {
-  res.send("this is put message");
-});
-
-app.delete("/message", logger, (req, res) => {
-  res.send("this is the delete message");
-});
