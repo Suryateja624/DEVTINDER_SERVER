@@ -6,6 +6,7 @@ const authRouter = express.Router();
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
 
+// Sign up API
 authRouter.post("/auth", logger, async (req, res) => {
   try {
     validateSignup(req);
@@ -38,6 +39,7 @@ authRouter.post("/auth", logger, async (req, res) => {
   }
 });
 
+// Login API
 authRouter.post("/login", logger, async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -63,6 +65,10 @@ authRouter.post("/login", logger, async (req, res) => {
   } catch (error) {
     res.status(400).send(error.message);
   }
+});
+
+authRouter.post("/logout", (req, res) => {
+  res.cookie("token", null, { expired: new Date(Date.now()), }).send("User Logged out successfully!");
 });
 
 module.exports = authRouter;
