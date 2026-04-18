@@ -3,10 +3,6 @@ const logger = require("../middleware/log");
 
 const testRouter = express.Router();
 
-testRouter.get("/", logger, (req, res) => {
-  res.send("This is GETs.");
-});
-
 testRouter.get("/test", logger, (req, res) => {
   res.send("This is the test");
 });

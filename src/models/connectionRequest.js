@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const connectionrequestschema = new mongoose.Schema({
+const connectionRequestSchema = new mongoose.Schema({
   senderUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -13,27 +13,32 @@ const connectionrequestschema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["PENDING", "REJECTED", "ACCEPTED", "IGNORED"],
-    default: "PENDING",
+    required: true,
+    enum: {
+      values: ["INTERESTED", "REJECTED", "ACCEPTED", "IGNORED"],
+      message: "Status must be one of: INTERESTED, REJECTED, ACCEPTED, IGNORED",
+    }
   },
-  updatedAt: {
-    type: Date,
-    default: Date.now(),
-  },
-  updatedBy: {
-    type: String,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now(),
-  },
-  createdBy: {
-    type: String,
-  },
-  isDelete: {
-    type: Boolean,
-    default: false,
-  },
+},
+{
+  timestamps: true,
 });
 
-module.exports = mongoose.model("ConnectionRequest", connectionrequestschema);
+// Index to ensure that a user cannot send multiple connection requests to the same user.
+// Index to optimize queries that filter by senderUserId and receiverUserId.
+connectionRequestSchema.index({ senderUserId: 1, receiverUserId: 1 });
+
+// pre means to run the function before an operation to the database. 
+// Args: What Operation? How to do the operation?
+// Middleware
+connectionRequestSchema.pre("save", function (next) {
+  const connectionRequest = this;
+
+  if (connectionRequest.senderUserId.equals(connectionRequest.receiverUserId)) {
+    throw new Error("Sender and receiver cannot be the same user.");
+  }
+
+  next();
+});
+
+module.exports = mongoose.model("ConnectionRequest", connectionRequestSchema);
