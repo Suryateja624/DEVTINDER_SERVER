@@ -2,25 +2,13 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const logger = require("../middleware/log");
+const token = require("../middleware/token");
 const userRouter = express.Router();
 const filteredFields = "firstName lastName age gender email skills about";
 
 // fetch all the users.
-userRouter.get("/users", logger, async (req, res) => {
+userRouter.get("/users", logger, token, async (req, res) => {
   try {
-    const { token } = req.cookies;
-  // Validate the token that is not empty
-  if (!token) {
-    return res.status(401).send("Please login or Signup first");
-  }
-
-  const decodedObj = await jwt.verify(token, "DevTinder@1");
-  const { _id } = decodedObj;
-
-  const user = await User.findById(_id);
-  if (!user) {
-    throw new Error("User not found");
-  }
     const resposne = await User.find({ isDelete: false }).select(
       filteredFields,
     );
@@ -32,7 +20,7 @@ userRouter.get("/users", logger, async (req, res) => {
 });
 
 // fetch user by emailId.
-userRouter.get("/findUserByEmail", logger, async (req, res) => {
+userRouter.get("/findUserByEmail", logger, token, async (req, res) => {
   try {
     const { email } = req.body;
     const resposne = await User.findOne({ email, isDelete: false }).select(
@@ -46,7 +34,7 @@ userRouter.get("/findUserByEmail", logger, async (req, res) => {
 });
 
 // fetch user by userId.
-userRouter.get("/findUserById", logger, async (req, res) => {
+userRouter.get("/findUserById", logger, token, async (req, res) => {
   try {
     const { _id } = req.body;
     const resposne = await User.findOne({ _id, isDelete: false }).select(
@@ -62,7 +50,7 @@ userRouter.get("/findUserById", logger, async (req, res) => {
 });
 
 //update the user info.
-userRouter.patch("/users", logger, async (req, res) => {
+userRouter.patch("/users", logger, token, async (req, res) => {
   try {
     const { _id } = req.body;
     const data = req.body;
@@ -76,7 +64,7 @@ userRouter.patch("/users", logger, async (req, res) => {
 });
 
 // delete the user.
-userRouter.delete("/users", logger, async (req, res) => {
+userRouter.delete("/users", logger, token, async (req, res) => {
   try {
     const { _id } = req.body;
     const response = await User.findByIdAndDelete({ _id });

@@ -7,13 +7,13 @@ const bcrypt = require("bcryptjs");
 const validator = require("validator");
 
 // Sign up API
-authRouter.post("/auth", logger, async (req, res) => {
+authRouter.post("/signup", logger, async (req, res) => {
   try {
     validateSignup(req);
-    const { firstName, lastName, gender, age, email, password, about, skills } =
+    const { firstName, lastName, gender, age, emailId, password, about, skills } =
       req.body;
     //lowercase the gender
-    const gen = gender.toLowerCase();
+    const gen = gender ? gender.toLowerCase() : undefined;
     //encrypt the password
     const encryptPassword = await bcrypt.hash(password, 10);
 
@@ -22,12 +22,11 @@ authRouter.post("/auth", logger, async (req, res) => {
       lastName,
       gender: gen,
       age,
-      email,
+      email: emailId,
       password: encryptPassword,
       about,
       skills,
     });
-
     const savedUser = await user.save();
     const token = await savedUser.getjwt();
     res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000) });

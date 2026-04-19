@@ -1,10 +1,12 @@
 const express = require('express');
 const requestRouter = express.Router();
 const { ConnectionRequestModel } = require('../models/ConnectionRequest');
-const { UserModel } = require('../models/User');
+const { UserModel } = require('../models/user');
+const logger = require("../middleware/log");
+const { userToken } = require("../middleware/token");
 
 // Sent a connection request
-requestRouter.post('/request/send/:status/:receiverId', async (req, res) => {
+requestRouter.post('/request/send/:status/:receiverId', logger, async (req, res) => {
     try {
         const user = req.user; // Assuming you have user authentication middleware
         const senderId = user._id;
@@ -60,7 +62,7 @@ requestRouter.post('/request/send/:status/:receiverId', async (req, res) => {
 });
 
 // Review a connection request (Accept or Reject)
-requestRouter.post('/request/review/:status/:requestId', async (req, res) => {
+requestRouter.post('/request/review/:status/:requestId', logger, async (req, res) => {
     try {
         const user = req.user; // Assuming you have user authentication middleware
         const { status, requestId } = req.params;
@@ -101,3 +103,5 @@ requestRouter.post('/request/review/:status/:requestId', async (req, res) => {
         });
     }
 });
+
+module.exports = requestRouter;

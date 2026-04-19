@@ -3,7 +3,16 @@ const express = require("express");
 const connectToDatabase = require("./src/config/database");
 const authRouter = require("./src/routes/auth");
 const userRouter = require("./src/routes/users");
+const requestRouter = require("./src/routes/request");
 const app = express();
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
