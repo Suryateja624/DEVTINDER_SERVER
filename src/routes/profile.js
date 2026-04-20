@@ -1,7 +1,7 @@
 const express = require('express');
 const profileRouter = express.Router();
-const { userToken } = require('../middleware/token');
-const { logger } = require('../middleware/log');
+const userToken = require('../middleware/token');
+const logger = require('../middleware/log');
 
 // Profile API returns the profile details of logged in user
 profileRouter.get('/profile/view', userToken, logger, async (req, res) => {

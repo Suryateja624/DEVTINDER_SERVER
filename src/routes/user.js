@@ -1,6 +1,6 @@
 const express = require('express');
 const userRouter = express.Router();
-const { userToken } = require("../middleware/token");
+const userToken = require("../middleware/token");
 const { ConnectionRequestModel } = require('../models/ConnectionRequest');
 
 // API to fetch all the connection requests received by the logged-in user with status "INTERESTED"

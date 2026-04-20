@@ -3,10 +3,10 @@ const requestRouter = express.Router();
 const { ConnectionRequestModel } = require('../models/ConnectionRequest');
 const { UserModel } = require('../models/user');
 const logger = require("../middleware/log");
-const { userToken } = require("../middleware/token");
+const userToken = require("../middleware/token");
 
 // Sent a connection request
-requestRouter.post('/request/send/:status/:receiverId', logger, async (req, res) => {
+requestRouter.post('/request/send/:status/:receiverId', logger, userToken, async (req, res) => {
     try {
         const user = req.user; // Assuming you have user authentication middleware
         const senderId = user._id;
@@ -62,7 +62,7 @@ requestRouter.post('/request/send/:status/:receiverId', logger, async (req, res)
 });
 
 // Review a connection request (Accept or Reject)
-requestRouter.post('/request/review/:status/:requestId', logger, async (req, res) => {
+requestRouter.post('/request/review/:status/:requestId', logger, userToken, async (req, res) => {
     try {
         const user = req.user; // Assuming you have user authentication middleware
         const { status, requestId } = req.params;

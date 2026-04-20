@@ -2,8 +2,11 @@ const express = require("express");
 
 const connectToDatabase = require("./src/config/database");
 const authRouter = require("./src/routes/auth");
-const userRouter = require("./src/routes/users");
+const usersRouter = require("./src/routes/users");
 const requestRouter = require("./src/routes/request");
+const profileRouter = require("./src/routes/profile");
+const userRouter = require("./src/routes/user");
+
 const app = express();
 const cors = require("cors");
 
@@ -17,6 +20,9 @@ app.use(
 app.use(express.json());
 
 app.use("/", authRouter);
+app.use("/", usersRouter);
+app.use("/", requestRouter);
+app.use("/", profileRouter);
 app.use("/", userRouter);
 
 
